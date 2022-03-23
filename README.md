@@ -1,6 +1,7 @@
 # message format define
 
-```json
+```
+json
 {
   "uuid": "uuid",
   "type": "apigw",

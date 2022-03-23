@@ -57,13 +57,13 @@ func (c *Context) CommitHandler(job *work.Job, next work.NextMiddlewareFunc) err
 	switch c.types {
 	case Apigw:
 		c.handler = KongHandler
-		return c.handler.Commit(job)
+		break
 	case Lbserver:
 		break
 	default:
 		break
 	}
-	return nil
+	return c.handler.Commit(job)
 }
 
 func (c *Context) RollbackHandler(job *work.Job, next work.NextMiddlewareFunc) error {

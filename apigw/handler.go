@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"github.com/gocraft/work"
 	"msgsvc/apigw/kongcli"
+	"msgsvc/apigw/manager"
 	"msgsvc/apigw/model"
 	"msgsvc/common"
 	"os"
@@ -36,6 +37,7 @@ func Receive() {
 
 type Handler struct {
 	KongClient *kongcli.KongClientWrap
+	Manager    manager.Manager
 }
 
 func (h *Handler) Commit(job *work.Job) error {
@@ -46,11 +48,9 @@ func (h *Handler) Commit(job *work.Job) error {
 	}
 	//create kong service resource
 	if content.Service != nil {
-		if err := h.KongClient.CreateService(content.Service); err != nil {
-			return err
-		}
+		h.Manager = manager.NewServiceMg(content.Service, h.KongClient)
 	}
-	return nil
+	return h.Manager.Create()
 }
 
 func (h *Handler) Rollback(job *work.Job) error {

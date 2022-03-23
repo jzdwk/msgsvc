@@ -3,15 +3,14 @@
 @Author : jzd
 @Project: msgsvc
 */
-package kong
+package apigw
 
 import (
 	"encoding/json"
 	"github.com/gocraft/work"
-	"github.com/hbagdi/go-kong/kong"
+	"msgsvc/apigw/kongcli"
+	"msgsvc/apigw/model"
 	"msgsvc/common"
-	"msgsvc/kong/httpcli"
-	"msgsvc/kong/model"
 	"os"
 	"os/signal"
 )
@@ -36,7 +35,7 @@ func Receive() {
 }
 
 type Handler struct {
-	KongClient *httpcli.KongClientWrap
+	KongClient *kongcli.KongClientWrap
 }
 
 func (h *Handler) Commit(job *work.Job) error {
@@ -51,6 +50,7 @@ func (h *Handler) Commit(job *work.Job) error {
 			return err
 		}
 	}
+	return nil
 }
 
 func (h *Handler) Rollback(job *work.Job) error {

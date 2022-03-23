@@ -3,9 +3,9 @@
 @Author : jzd
 @Project: apigw
 */
-package httpcli
+package kongcli
 
-import gokong "github.com/hbagdi/go-kong/kong"
+import "github.com/hbagdi/go-kong/kong"
 
 //kong support http method
 type HttpType int
@@ -58,7 +58,7 @@ func (t *HttpType) ToStrings() []*string {
 }
 
 type KongClientWrap struct {
-	cli *gokong.Client
+	cli *kong.Client
 }
 
 func NewKongClient() (*KongClientWrap, error) {

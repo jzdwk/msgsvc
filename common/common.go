@@ -11,8 +11,6 @@ import (
 	"fmt"
 	"github.com/gocraft/work"
 	"github.com/sirupsen/logrus"
-
-	"msgsvc/kong"
 )
 
 const (
@@ -25,6 +23,8 @@ const (
 
 	Lbserver = "lbserver"
 )
+
+var KongHandler Handler
 
 type Handler interface {
 	Commit(job *work.Job) error
@@ -56,7 +56,7 @@ func (c *Context) CommitHandler(job *work.Job, next work.NextMiddlewareFunc) err
 	// Extract arguments:
 	switch c.types {
 	case Apigw:
-		c.handler = kong.KoHandler
+		c.handler = KongHandler
 		return c.handler.Commit(job)
 	case Lbserver:
 		break
@@ -70,7 +70,7 @@ func (c *Context) RollbackHandler(job *work.Job, next work.NextMiddlewareFunc) e
 	// Extract arguments:
 	switch c.types {
 	case Apigw:
-		c.handler = kong.KoHandler
+		c.handler = KongHandler
 		return c.handler.Rollback(job)
 	case Lbserver:
 		break

@@ -1,11 +1,10 @@
-package httpcli
+package kongcli
 
 import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"github.com/hbagdi/go-kong/kong"
-	gokong "github.com/hbagdi/go-kong/kong"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -56,6 +55,25 @@ func (t *HeaderRoundTripper) RoundTrip(req *http.Request) (*http.Response,
 
 // GetKongClient returns a Kong client
 func getKongClient(opt KongClientConfig) (*kong.Client, error) {
+	c := &http.Client{}
+	url, err := url.Parse(opt.Address)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse kong address")
+	}
+	if opt.Workspace != "" {
+		url.Path = path.Join(url.Path, opt.Workspace)
+	}
+	if url.Scheme == "http" {
+		kongClient, err := kong.NewClient(kong.String(url.String()), c)
+		if err != nil {
+			return nil, errors.Wrap(err, "creating client for Kong's Admin API")
+		}
+		if opt.Debug {
+			kongClient.SetDebugMode(true)
+			kongClient.SetLogger(os.Stderr)
+		}
+		return kongClient, nil
+	}
 
 	var tlsConfig tls.Config
 	if opt.TLSSkipVerify {
@@ -74,7 +92,6 @@ func getKongClient(opt KongClientConfig) (*kong.Client, error) {
 		tlsConfig.RootCAs = certPool
 	}
 
-	c := &http.Client{}
 	defaultTransport := http.DefaultTransport.(*http.Transport)
 	defaultTransport.TLSClientConfig = &tlsConfig
 	c.Transport = defaultTransport
@@ -84,29 +101,16 @@ func getKongClient(opt KongClientConfig) (*kong.Client, error) {
 			rt:      defaultTransport,
 		}
 	}
-
-	url, err := url.Parse(opt.Address)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse kong address")
-	}
-	if opt.Workspace != "" {
-		url.Path = path.Join(url.Path, opt.Workspace)
-	}
-
 	kongClient, err := kong.NewClient(kong.String(url.String()), c)
 	if err != nil {
 		return nil, errors.Wrap(err, "creating client for Kong's Admin API")
 	}
-	if opt.Debug {
-		kongClient.SetDebugMode(true)
-		kongClient.SetLogger(os.Stderr)
-	}
 	return kongClient, nil
 }
 
-func newKongClient() (*gokong.Client, error) {
+func newKongClient() (*kong.Client, error) {
 	protocol := "http"
-	ip := "ecs.jzd"
+	ip := "myecs.jzd"
 	port := 65101
 	address := fmt.Sprintf("%v://%v:%d", protocol, ip, port)
 	logrus.Infof("starting to connect kong on %v.", address)

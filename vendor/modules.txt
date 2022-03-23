@@ -1,17 +1,23 @@
 # github.com/gocraft/work v0.5.1
+## explicit
 github.com/gocraft/work
 # github.com/gomodule/redigo/redis v0.0.1
+## explicit
 github.com/gomodule/redigo/redis
 # github.com/google/go-querystring v1.0.0
 github.com/google/go-querystring/query
 # github.com/hbagdi/go-kong v0.12.0
+## explicit
 github.com/hbagdi/go-kong/kong
 github.com/hbagdi/go-kong/kong/custom
 # github.com/pkg/errors v0.9.1
+## explicit
 github.com/pkg/errors
 # github.com/robfig/cron v1.2.0
+## explicit
 github.com/robfig/cron
 # github.com/sirupsen/logrus v1.8.1
+## explicit
 github.com/sirupsen/logrus
 # golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
 golang.org/x/sys/unix

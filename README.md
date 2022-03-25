@@ -1,27 +1,36 @@
 # message format define
 
-```
-json
+a common format:
+```json
 {
-  "uuid": "uuid",
+  "id": "uuid",
+  "type": "service type",
+  "operation":"create/delete/update",
+  "callback":"status update callback url",
+  "content": {
+    "self_define": "self_define"
+  }
+}
+```
+
+## apigw
+service create example
+```json
+{
+  "id": "uuid",
   "type": "apigw",
+  "operation":"create",
+  "callback":"http://localhost:8000/callback",
   "content": {
     "service": {
-      "name": "string",
-      "upstream_name": "string",
-      "schema": "",
+      "name": "test",
+      "upstream_name": "test_upstream",
+      "schema": "http",
       "endpoints": [
-        "string",
-        "string"
-      ]
-    },
-    "api": {
-    },
-    "auth": {
-    },
-    "rate_limit": {
-    },
-    "ip_policy": {
+        "localhost:8000",
+        "localhost:8001"
+      ],
+      "auth_type":"apikey"
     }
   }
 }

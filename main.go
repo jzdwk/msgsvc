@@ -20,12 +20,12 @@ func main() {
 	if kongClient, err := kongcli.NewKongClient(); err == nil {
 		common.KongHandler = &apigw.Handler{KongClient: kongClient}
 	} else {
-		logrus.Errorf("init client err, %v", err.Error())
+		logrus.Errorf("init kong client err, %v", err.Error())
 		return
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	go apigw.Receive(ctx)
+	go apigw.Start(ctx)
 	// Wait for a signal to quit
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt, os.Kill)

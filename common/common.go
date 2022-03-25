@@ -16,10 +16,9 @@ import (
 const (
 	RedisAddr = "myecs.jzd:65079"
 
-	Apigw            = "apigw"
-	ApigwNS          = Apigw + "_ns"
-	ApigwCommitJob   = "kong_resource_commit"
-	ApigwRollbackJob = "kong_resource_rollback"
+	Apigw          = "apigw"
+	ApigwNS        = Apigw + "_ns"
+	ApigwCommitJob = "kong_resource_commit"
 
 	Lbserver = "lbserver"
 )
@@ -28,7 +27,6 @@ var KongHandler Handler
 
 type Handler interface {
 	Commit(job *work.Job) error
-	Rollback(job *work.Job) error
 }
 
 type Context struct {
@@ -64,18 +62,4 @@ func (c *Context) CommitHandler(job *work.Job) error {
 		break
 	}
 	return c.handler.Commit(job)
-}
-
-func (c *Context) RollbackHandler(job *work.Job, next work.NextMiddlewareFunc) error {
-	// Extract arguments:
-	switch c.types {
-	case Apigw:
-		c.handler = KongHandler
-		return c.handler.Rollback(job)
-	case Lbserver:
-		break
-	default:
-		break
-	}
-	return nil
 }

@@ -15,6 +15,7 @@ type Service struct {
 	UpstreamName string   `json:"upstream_name"`
 	Schema       string   `json:"schema"`
 	EndPoints    []string `json:"end_points"`
+	AuthType     string   `json:"auth_type"`
 }
 
 type Api struct {

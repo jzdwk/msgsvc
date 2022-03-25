@@ -28,7 +28,17 @@ const (
 )
 
 const (
-	plugin = "plugin"
+	acl             = "acl"
+	auth            = "key-auth"
+	consumer        = "consumer"
+	consumerKeyAuth = 0
+	consumerHmac    = 1
+	hmac            = "hmac-auth"
+	rateLimit       = "rate-limiting"
+	route           = "route"
+	service         = "service"
+	trans           = "api-transformer"
+	ipPolicy        = "ip-restriction"
 )
 
 var HttpMethodMap = map[HttpType]string{

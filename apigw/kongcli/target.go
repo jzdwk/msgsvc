@@ -33,7 +33,7 @@ func (kong *KongClientWrap) DeleteTargets(upstream string, uuids []string) error
 		if err := kong.cli.Targets.Delete(context.Background(), &upstream, &id); err != nil {
 			return err
 		}
-		logrus.Infof("crate kong target success, uuid %v", id)
+		logrus.Infof("delete kong target success, uuid %v", id)
 	}
 	return nil
 }

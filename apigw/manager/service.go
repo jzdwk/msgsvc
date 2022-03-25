@@ -26,22 +26,25 @@ func NewServiceMg(service *model.Service, kongCli *kongcli.KongClientWrap, callb
 func (sm *ServiceMg) Create() error {
 	var err error
 	kongResource := KongResourceId{}
+	defer func() {
+		if err != nil {
+			sm.kongCli.DeleteUpstream(kongResource.UpstreamUUID)
+			sm.kongCli.DeleteService(kongResource.ServiceUUID)
+			sm.failCallback()
+		} else {
+			sm.successCallback()
+		}
+	}()
 	//1. create kong service
 	if kongResource.ServiceUUID, err = sm.kongCli.CreateService(sm.model); err != nil {
-		sm.failCallback()
 		return err
 	}
 	//2. create kong upstream
 	if kongResource.UpstreamUUID, err = sm.kongCli.CreateUpstream(sm.model); err != nil {
-		_ = sm.kongCli.DeleteService(kongResource.ServiceUUID)
-		sm.failCallback()
 		return err
 	}
 	//3. create kong target
 	if kongResource.TargetUUID, err = sm.kongCli.CreateTarget(sm.model); err != nil {
-		_ = sm.kongCli.DeleteUpstream(kongResource.UpstreamUUID)
-		_ = sm.kongCli.DeleteService(kongResource.ServiceUUID)
-		sm.failCallback()
 		return err
 	}
 	//4. auth type
@@ -49,16 +52,10 @@ func (sm *ServiceMg) Create() error {
 	case "apikey":
 		_, err = sm.kongCli.CreateAclPlugin(sm.model)
 		if err != nil {
-			_ = sm.kongCli.DeleteUpstream(kongResource.UpstreamUUID)
-			_ = sm.kongCli.DeleteService(kongResource.ServiceUUID)
-			sm.failCallback()
 			return err
 		}
 		_, err = sm.kongCli.CreateKeyAuthPlugin(sm.model)
 		if err != nil {
-			_ = sm.kongCli.DeleteUpstream(kongResource.UpstreamUUID)
-			_ = sm.kongCli.DeleteService(kongResource.ServiceUUID)
-			sm.failCallback()
 			return err
 		}
 		break
@@ -67,8 +64,7 @@ func (sm *ServiceMg) Create() error {
 	default:
 		break
 	}
-	sm.successCallback()
-	return nil
+	return err
 }
 
 func (sm *ServiceMg) Update() error {

@@ -40,7 +40,6 @@ type Handler struct {
 }
 
 func (h *Handler) Commit(job *work.Job) error {
-	callback := job.ArgString("callback")
 	contentJson, _ := json.Marshal(job.Args["content"])
 	var content model.Content
 	if err := json.Unmarshal(contentJson, &content); err != nil {
@@ -48,7 +47,7 @@ func (h *Handler) Commit(job *work.Job) error {
 	}
 	//create kong service resource
 	if content.Service != nil {
-		h.Manager = manager.NewServiceMg(content.Service, h.KongClient, callback)
+		h.Manager = manager.NewServiceMg(content.Service, h.KongClient, content.Callback)
 	}
 	var err error
 	switch job.ArgString("operation") {

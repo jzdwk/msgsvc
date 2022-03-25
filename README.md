@@ -6,7 +6,6 @@ a common format:
   "id": "uuid",
   "type": "service type",
   "operation":"create/delete/update",
-  "callback":"status update callback url",
   "content": {
     "self_define": "self_define"
   }
@@ -22,6 +21,7 @@ service create example
   "operation":"create",
   "callback":"http://localhost:8000/callback",
   "content": {
+    "callback":"status update callback url",
     "service": {
       "name": "test",
       "upstream_name": "test_upstream",

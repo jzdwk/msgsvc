@@ -6,8 +6,9 @@
 package model
 
 type Content struct {
-	Service *Service `json:"service,omitempty"`
-	Api     *Api     `json:"api,omitempty"`
+	Callback string
+	Service  *Service `json:"service,omitempty"`
+	Api      *Api     `json:"api,omitempty"`
 }
 
 type Service struct {

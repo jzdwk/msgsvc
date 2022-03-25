@@ -7,17 +7,26 @@ package kongcli
 
 import (
 	"context"
-	gokong "github.com/hbagdi/go-kong/kong"
+	gokong "github.com/kong/go-kong/kong"
 	"github.com/sirupsen/logrus"
 	"msgsvc/apigw/model"
 )
 
-func (kong *KongClientWrap) CreateService(service *model.Service) error {
+//must idempotent
+func (kong *KongClientWrap) CreateService(service *model.Service) (string, error) {
 	kongService := &gokong.Service{Name: &service.Name, Host: &service.UpstreamName, Protocol: &service.Schema}
 	svc, err := kong.cli.Services.Create(context.Background(), kongService)
 	if err != nil {
+		return "", err
+	}
+	logrus.Infof("create kong service success, name [%v], uuid [%v]", *svc.Name, *svc.ID)
+	return *svc.ID, nil
+}
+
+func (kong *KongClientWrap) DeleteService(uuid string) error {
+	if err := kong.cli.Services.Delete(context.Background(), &uuid); err != nil {
 		return err
 	}
-	logrus.Infof("crate kong service success, uuid %v", *svc.ID)
+	logrus.Infof("delete kong service success,  uuid [%v]", uuid)
 	return nil
 }

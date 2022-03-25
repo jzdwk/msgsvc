@@ -20,14 +20,19 @@ func NewServiceMg(service *model.Service, kongCli *kongcli.KongClientWrap) Manag
 }
 
 func (s *ServiceMg) Create() error {
+	var err error
+	kongResource := KongResourceId{}
 	//create kong service
-	if err := s.kongCli.CreateService(s.model); err != nil {
+	if kongResource.ServiceUUID, err = s.kongCli.CreateService(s.model); err != nil {
 		return err
 	}
-	if err := s.kongCli.CreateUpstream(s.model); err != nil {
+	if kongResource.UpstreamUUID, err = s.kongCli.CreateUpstream(s.model); err != nil {
+		_ = s.kongCli.DeleteService(kongResource.ServiceUUID)
 		return err
 	}
-	if err := s.kongCli.CreateTarget(s.model); err != nil {
+	if kongResource.TargetUUID, err = s.kongCli.CreateTarget(s.model); err != nil {
+		_ = s.kongCli.DeleteUpstream(kongResource.UpstreamUUID)
+		_ = s.kongCli.DeleteService(kongResource.ServiceUUID)
 		return err
 	}
 	return nil

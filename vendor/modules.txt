@@ -4,12 +4,12 @@ github.com/gocraft/work
 # github.com/gomodule/redigo/redis v0.0.1
 ## explicit
 github.com/gomodule/redigo/redis
-# github.com/google/go-querystring v1.0.0
+# github.com/google/go-querystring v1.1.0
 github.com/google/go-querystring/query
-# github.com/hbagdi/go-kong v0.12.0
+# github.com/kong/go-kong v0.18.0
 ## explicit
-github.com/hbagdi/go-kong/kong
-github.com/hbagdi/go-kong/kong/custom
+github.com/kong/go-kong/kong
+github.com/kong/go-kong/kong/custom
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
@@ -19,6 +19,7 @@ github.com/robfig/cron
 # github.com/sirupsen/logrus v1.8.1
 ## explicit
 github.com/sirupsen/logrus
-# golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
+# golang.org/x/sys v0.0.0-20210225134936-a50acf3fe073
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows

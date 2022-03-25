@@ -38,11 +38,11 @@ type Context struct {
 }
 
 func (c *Context) Log(job *work.Job, next work.NextMiddlewareFunc) error {
-	if _, ok := job.Args["message_id"]; ok {
-		c.msgId = job.ArgString("message_id")
+	if _, ok := job.Args["id"]; ok {
+		c.msgId = job.ArgString("id")
 	}
-	if _, ok := job.Args["message_type"]; ok {
-		c.types = job.ArgString("message_type")
+	if _, ok := job.Args["type"]; ok {
+		c.types = job.ArgString("type")
 	}
 	if c.msgId == "" || c.types == "" {
 		jobInfo, _ := json.Marshal(job)
@@ -52,7 +52,7 @@ func (c *Context) Log(job *work.Job, next work.NextMiddlewareFunc) error {
 	return next()
 }
 
-func (c *Context) CommitHandler(job *work.Job, next work.NextMiddlewareFunc) error {
+func (c *Context) CommitHandler(job *work.Job) error {
 	// Extract arguments:
 	switch c.types {
 	case Apigw:

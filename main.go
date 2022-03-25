@@ -6,10 +6,13 @@
 package main
 
 import (
+	"context"
 	"github.com/sirupsen/logrus"
 	"msgsvc/apigw"
 	"msgsvc/apigw/kongcli"
 	"msgsvc/common"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -20,5 +23,12 @@ func main() {
 		logrus.Errorf("init client err, %v", err.Error())
 		return
 	}
-	//init pool
+
+	ctx, cancel := context.WithCancel(context.Background())
+	go apigw.Receive(ctx)
+	// Wait for a signal to quit
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, os.Kill)
+	<-signalChan
+	cancel()
 }

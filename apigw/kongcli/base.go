@@ -5,7 +5,7 @@
 */
 package kongcli
 
-import "github.com/hbagdi/go-kong/kong"
+import "github.com/kong/go-kong/kong"
 
 //kong support http method
 type HttpType int

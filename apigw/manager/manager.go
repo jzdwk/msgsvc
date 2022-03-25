@@ -10,3 +10,11 @@ type Manager interface {
 	Update() error
 	Delete() error
 }
+
+type KongResourceId struct {
+	ServiceUUID  string
+	UpstreamUUID string
+	TargetUUID   []string
+
+	RouteUUID string
+}

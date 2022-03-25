@@ -6,33 +6,31 @@
 package apigw
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/gocraft/work"
+	"github.com/sirupsen/logrus"
 	"msgsvc/apigw/kongcli"
 	"msgsvc/apigw/manager"
 	"msgsvc/apigw/model"
 	"msgsvc/common"
-	"os"
-	"os/signal"
 )
 
-func Receive() {
+func Receive(ctx context.Context) {
 	// apigw pool
 	redisPool := work.NewWorkerPool(common.Context{}, 10, common.ApigwNS, common.RedisPool)
 	// Add middleware that will be executed for each job
 	redisPool.Middleware((*common.Context).Log)
 	// retry 3 times, commit job
 	redisPool.JobWithOptions(common.ApigwCommitJob, work.JobOptions{MaxFails: 3, SkipDead: false}, (*common.Context).CommitHandler)
-	//rollback job
-	redisPool.JobWithOptions(common.ApigwRollbackJob, work.JobOptions{MaxFails: 3, SkipDead: false}, (*common.Context).CommitHandler)
 	// Start processing jobs
 	redisPool.Start()
-	// Wait for a signal to quit:
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt, os.Kill)
-	<-signalChan
 	// Stop the pool
-	redisPool.Stop()
+	select {
+	case <-ctx.Done():
+		logrus.Infof("apigw redis pool exits")
+		redisPool.Stop()
+	}
 }
 
 type Handler struct {
@@ -41,9 +39,9 @@ type Handler struct {
 }
 
 func (h *Handler) Commit(job *work.Job) error {
-	contentJson := job.ArgString("content")
+	contentJson, _ := json.Marshal(job.Args["content"])
 	var content model.Content
-	if err := json.Unmarshal([]byte(contentJson), &content); err != nil {
+	if err := json.Unmarshal(contentJson, &content); err != nil {
 		return err
 	}
 	//create kong service resource

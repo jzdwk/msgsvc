@@ -15,8 +15,8 @@ func TestServiceCreate(t *testing.T) {
 	client := KongClientWrap{cli: cli}
 	endpoints := []string{"localhost:8000", "localhost:8001"}
 	service := model.Service{Name: "test_svc", UpstreamName: "test_upstream", Schema: "http", EndPoints: endpoints}
-	if err := client.CreateService(&service); err != nil {
+	if _, err := client.CreateService(&service); err != nil {
 		t.Fatalf("failed to create kong service: %v", err)
 	}
-	t.Log("create kong target success")
+	t.Log("create kong service success")
 }

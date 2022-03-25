@@ -6,8 +6,8 @@
 package model
 
 type Content struct {
-	Service *Service
-	Api     *Api
+	Service *Service `json:"service,omitempty"`
+	Api     *Api     `json:"api,omitempty"`
 }
 
 type Service struct {
